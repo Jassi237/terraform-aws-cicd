@@ -1,0 +1,11 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+
+# SSH keys
+**/terraform-cicd-key
+**/terraform-cicd-key.pub

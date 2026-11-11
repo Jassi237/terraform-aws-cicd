@@ -27,7 +27,7 @@ resource "aws_instance" "web" {
   vpc_security_group_ids      = [aws_security_group.allow_tls.id]
   subnet_id                   = aws_subnet.public_subnet.id
   associate_public_ip_address = true
-  user_data = file("script.sh")
+  user_data                   = file("script.sh")
   tags = {
     Name = "terraform-cicd-webserver"
   }

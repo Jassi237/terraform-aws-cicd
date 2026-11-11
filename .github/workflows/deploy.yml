@@ -1,0 +1,34 @@
+name: Deploy website on AWS EC2 
+
+on: 
+ push:
+  branches: 
+   - main
+  paths: 
+   - 'website/**'
+   - 'deploy.sh'
+   - '.github/workflows/deploy.yml'
+
+jobs:
+  deploy:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v4
+      
+     - name: Deploy key
+       run: |
+        echo "${{secrets.EC2_SSH_KEY}}" > deploy_key
+        chmod 400 deploy_key
+      
+     - name: SSH connection with instance
+       run: ssh -o StrictHostKeyChecking=no -i deploy_key "${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}" "echo Connected Successfully"
+
+     - name: Copy website to instance
+       run: scp -i deploy_key -r website "${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}":/home/ubuntu/
+     
+     - name: Copy deploy.sh to instance
+       run: scp -i deploy_key deploy.sh "${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}":/home/ubuntu/
+
+     - name: Deploy website to instance
+       run: ssh -i deploy_key "${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}" "cd /home/ubuntu && bash deploy.sh"
